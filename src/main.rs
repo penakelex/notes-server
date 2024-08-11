@@ -1,8 +1,9 @@
-use axum::Router;
 use tokio::net::TcpListener;
 
+mod error;
+mod model;
+mod web;
 mod settings;
-mod routes;
 
 #[tokio::main]
 async fn main() {
@@ -12,5 +13,5 @@ async fn main() {
     let listener = TcpListener::bind(settings.server.address())
         .await.unwrap();
     
-    axum::serve(listener, Router::new()).await.unwrap();
+    axum::serve(listener, web::routes()).await.unwrap();
 }
