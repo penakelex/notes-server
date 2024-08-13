@@ -1,3 +1,3 @@
-mod database;
-mod users;
-mod notes;
+pub mod database;
+pub mod users;
+pub mod notes;
