@@ -3,6 +3,7 @@ use std::sync::{Arc, Mutex};
 use crate::error::{Error, NoteError, Result};
 use crate::model::notes::notes_models::{Note, NoteCreate, NoteEdit};
 
+#[derive(Clone)]
 pub struct NotesService {
     notes_collection: Arc<Mutex<Vec<Option<Note>>>>,
 }
@@ -14,7 +15,9 @@ impl NotesService {
 }
 
 impl NotesService {
-    pub async fn create_note(&self, note_create: NoteCreate, creator_id: u32) -> Result<Note> {
+    pub async fn create_note(
+        &self, note_create: NoteCreate, creator_id: u32,
+    ) -> Result<Note> {
         let mut collection = self.notes_collection.lock()
             .map_err(|_| Error::Notes(NoteError::CreateFail))?;
 
@@ -49,7 +52,9 @@ impl NotesService {
         Ok(notes)
     }
 
-    pub async fn edit_note(&self, note_edit: NoteEdit, editor_id: u32) -> Result<Note> {
+    pub async fn edit_note(
+        &self, note_edit: NoteEdit, editor_id: u32,
+    ) -> Result<Note> {
         let mut collection = self.notes_collection.lock()
             .map_err(|_| Error::Notes(NoteError::EditFail))?;
 
@@ -72,7 +77,7 @@ impl NotesService {
     pub async fn delete_note(&self, note_id: u64, deleter_id: u32) -> Result<Note> {
         let mut collection = self.notes_collection.lock()
             .map_err(|_| Error::Notes(NoteError::DeleteFail))?;
-        
+
         let deleted_note = collection.get_mut(note_id as usize)
             .user_can_change_note(deleter_id, Error::Notes(NoteError::DeleterCanNotDeleteNote))?
             .and_then(|note| note.take())
