@@ -1,8 +1,14 @@
 use axum::Router;
 
-mod user_routes;
-mod note_routes;
+use crate::state::ApplicationState;
 
-pub fn routes() -> Router {
+pub mod jwt_controller;
+
+mod routes;
+mod auth_middleware;
+
+pub fn routes(state: ApplicationState) -> Router {
     Router::new()
+        .nest("/user", routes::users_routes::routes(state.clone()))
+        .nest("/notes", routes::notes_routes::routes(state.clone()))
 }
