@@ -1,3 +1,4 @@
 pub mod database;
-pub mod users;
 pub mod notes;
+pub mod sessions;
+pub mod users;

@@ -7,6 +7,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     User(UserError),
     Notes(NoteError),
+    Sessions(SessionError),
 }
 
 #[derive(Debug, Clone)]
@@ -18,7 +19,7 @@ pub enum UserError {
     //Login
     LoginFail,
     LoginFailInvalidParams,
-    
+
     //Authentication
     AuthFail,
     AuthFailInvalidParams,
@@ -42,18 +43,37 @@ pub enum NoteError {
 
     //Receiving
     ReceiveFail,
-    
+
     //Editing
     EditFail,
     EditorCanNotEditNote,
-    
+
     //Deletion
     DeleteFail,
     DeleterCanNotDeleteNote,
-    
+
     //General
     NoteDoesNotExists,
+
+}
+
+#[derive(Debug, Clone)]
+pub enum SessionError {
+    //Creation
+    CreateFail,
+
+    //Update
+    UpdateFail,
     
+    //Deletion
+    DeleteFail,
+
+    //Validity check
+    ValidityCheckFail,
+    SessionInvalid,
+
+    //General
+    SessionDoesNotExists,
 }
 
 impl IntoResponse for Error {
