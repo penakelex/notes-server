@@ -11,6 +11,7 @@ use chrono::Utc;
 
 use crate::context::AuthTokenContext;
 use crate::error::{Error, Result, UserError};
+use crate::log::log_layer;
 use crate::state::ApplicationState;
 use crate::web::jwt_controller::TokenClaims;
 
@@ -22,6 +23,8 @@ pub async fn set_auth_token_middleware(
     State(state): State<ApplicationState>,
     mut response: Response,
 ) -> Result<Response> {
+    log_layer(AUTH_MIDDLEWARE, "set_auth_token");
+    
     let context = response.extensions()
         .get::<AuthTokenContext>()
         .ok_or(Error::User(UserError::AuthFail))?;
@@ -60,6 +63,8 @@ pub async fn token_context_resolver_middleware(
     mut request: Request<Body>,
     next: Next,
 ) -> Result<Response> {
+    log_layer(AUTH_MIDDLEWARE, "token_context_resolver");
+    
     let auth_token = cookies
         .get(AUTH_TOKEN)
         .map(|cookie| cookie.value().to_string());
@@ -96,6 +101,8 @@ pub async fn require_auth_middleware(
     request: Request<Body>,
     next: Next,
 ) -> Result<Response> {
+    log_layer(AUTH_MIDDLEWARE, "require_auth");
+    
     context?;
 
     Ok(next.run(request).await)

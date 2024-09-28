@@ -7,9 +7,11 @@ use tap::Tap;
 
 use crate::context::AuthTokenContext;
 use crate::error::Result;
+use crate::log::log_layer;
 use crate::model::users::users_models::{UserCreate, UserEdit, UserLogin};
 use crate::state::ApplicationState;
 use crate::web::auth_middleware::{require_auth_middleware, set_auth_token_middleware, token_context_resolver_middleware};
+use crate::web::routes::HANDLER;
 
 pub fn routes(state: ApplicationState) -> Router {
     Router::new()
@@ -38,6 +40,8 @@ async fn register_handler(
     State(state): State<ApplicationState>,
     Json(user_create): Json<UserCreate>,
 ) -> Result<Response> {
+    log_layer(HANDLER, "register");
+    
     let user = state.database.users
         .create_user(user_create)
         .await?;
@@ -57,6 +61,8 @@ async fn login_handler(
     State(state): State<ApplicationState>,
     Json(user_login): Json<UserLogin>,
 ) -> Result<Response> {
+    log_layer(HANDLER, "login");
+    
     let user = state.database.users
         .login(user_login)
         .await?;
@@ -76,6 +82,8 @@ async fn edit_handler(
     State(state): State<ApplicationState>,
     Json(user_edit): Json<UserEdit>,
 ) -> Result<impl IntoResponse> {
+    log_layer(HANDLER, "edit");
+    
     let user = state.database.users
         .edit_user(user_edit)
         .await?;
@@ -87,6 +95,8 @@ async fn delete_handler(
     State(state): State<ApplicationState>,
     Json(user_id): Json<u32>,
 ) -> Result<impl IntoResponse> {
+    log_layer(HANDLER, "delete");
+    
     let user = state.database.users
         .delete_user(user_id)
         .await?;

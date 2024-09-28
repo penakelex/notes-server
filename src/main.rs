@@ -1,6 +1,7 @@
 use tokio::net::TcpListener;
 
 use crate::error::Result;
+use crate::log::log_layer;
 use crate::state::ApplicationState;
 
 mod context;
@@ -19,8 +20,13 @@ async fn main() -> Result<()> {
         TcpListener::bind(application_state.settings.server.address())
             .await.unwrap();
 
+    log_layer(
+        "LISTENING", 
+        application_state.settings.server.address().as_str()
+    );
+    
     axum::serve(listener, web::routes(application_state))
         .await.unwrap();
-
+    
     Ok(())
 }
