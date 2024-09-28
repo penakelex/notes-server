@@ -91,22 +91,6 @@ impl UsersService {
         user.ok_or(Error::User(UserError::UserDoesNotExists))
     }
 
-    pub async fn authenticate(&self, user_id: &u32, password: &String) -> Result<()> {
-        let collection = self.users_collection.lock()
-            .map_err(|_| Error::User(UserError::AuthFail))?;
-
-        let user = collection.get(*user_id as usize)
-            .ok_or(Error::User(UserError::UserDoesNotExists))?
-            .as_ref()
-            .ok_or(Error::User(UserError::UserDoesNotExists))?;
-
-        if user.password == *password {
-            Ok(())
-        } else {
-            Err(Error::User(UserError::AuthFailInvalidParams))
-        }
-    }
-
     pub async fn login(&self, user_login: UserLogin) -> Result<User> {
         let collection = self.users_collection.lock()
             .map_err(|_| Error::User(UserError::LoginFail))?;

@@ -32,7 +32,7 @@ pub async fn set_auth_token_middleware(
     let user_id = context.user_id();
 
     let session = state.database.sessions
-        .create_session(user_id, state.settings.jwt.validity_days)
+        .create_or_update_session(user_id, state.settings.jwt.validity_days)
         .await?;
 
     let claims = TokenClaims {

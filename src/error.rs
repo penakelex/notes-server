@@ -24,7 +24,6 @@ pub enum UserError {
 
     //Authentication
     AuthFail,
-    AuthFailInvalidParams,
 
     //Editing
     EditFail,
@@ -62,10 +61,7 @@ pub enum NoteError {
 pub enum SessionError {
     //Creation
     CreateFail,
-
-    //Update
-    UpdateFail,
-
+    
     //Deletion
     DeleteFail,
 
@@ -114,7 +110,6 @@ impl ToClientStatusAndError for UserError {
         match self {
             UserError::RegisterFail
             | UserError::LoginFail
-            | UserError::AuthFail
             | UserError::EditFail
             | UserError::DeleteFail => (
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -128,10 +123,6 @@ impl ToClientStatusAndError for UserError {
                 StatusCode::FORBIDDEN,
                 ClientError::LOGIN_FAIL
             ),
-            UserError::AuthFailInvalidParams => (
-                StatusCode::FORBIDDEN,
-                ClientError::NO_AUTHENTICATION
-            ),
             UserError::EditFailNicknameCaptured => (
                 StatusCode::CONFLICT,
                 ClientError::INVALID_PARAMETERS
@@ -143,7 +134,11 @@ impl ToClientStatusAndError for UserError {
             UserError::UserDoesNotExists => (
                 StatusCode::NOT_FOUND,
                 ClientError::INVALID_PARAMETERS
-            )
+            ),
+            UserError::AuthFail => (
+                StatusCode::FORBIDDEN,
+                ClientError::NO_AUTHENTICATION
+            ),
         }
     }
 }
@@ -176,7 +171,6 @@ impl ToClientStatusAndError for SessionError {
     fn client_status_and_error(&self) -> (StatusCode, ClientError) {
         match self {
             SessionError::CreateFail
-            | SessionError::UpdateFail
             | SessionError::DeleteFail
             | SessionError::ValidityCheckFail => (
                 StatusCode::INTERNAL_SERVER_ERROR,

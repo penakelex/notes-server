@@ -100,6 +100,10 @@ async fn delete_handler(
     let user = state.database.users
         .delete_user(user_id)
         .await?;
+    
+    state.database.sessions
+        .delete_session(user_id)
+        .await?;
 
     Ok(Json(user))
 }
