@@ -5,21 +5,22 @@ use crate::state::ApplicationState;
 
 mod context;
 mod error;
+mod log;
 mod model;
-mod web;
 mod settings;
 mod state;
+mod web;
 
 #[tokio::main]
-async fn main() -> Result<()>{
+async fn main() -> Result<()> {
     let application_state = ApplicationState::new();
-    
-    let listener = 
+
+    let listener =
         TcpListener::bind(application_state.settings.server.address())
-        .await.unwrap();
-    
+            .await.unwrap();
+
     axum::serve(listener, web::routes(application_state))
         .await.unwrap();
-    
+
     Ok(())
 }
